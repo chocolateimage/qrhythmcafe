@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt
 import requests
 import flowlayout
 import levelbox
+import utils
 import facet
 import webbrowser
 import math
@@ -60,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.txtSearch.returnPressed.connect(self.onsearchpress)
         self.searchTimer = None
     def showabout(self):
-        QtWidgets.QMessageBox.about(self,"About QRhythmCafe","A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder")
+        QtWidgets.QMessageBox.about(self,"About QRhythmCafe","A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder\n\nVersion " + utils.VERSION_NUMBER)
     def showaboutqt(self):
         QtWidgets.QMessageBox.aboutQt(self)
     def navChange(self,by):

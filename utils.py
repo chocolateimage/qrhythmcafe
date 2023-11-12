@@ -9,6 +9,8 @@ import zipfile
 import os
 import shutil
 
+VERSION_NUMBER = "0.0.1"
+
 def get_rd_levels_folder():
     if hasgi:
         return GLib.get_user_special_dir(GLib.USER_DIRECTORY_DOCUMENTS) + "/Rhythm Doctor/Levels"
