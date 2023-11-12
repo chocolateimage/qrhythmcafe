@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=0.0.1
+Name=QRhythmCafe
+Comment=A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder
+Exec=/usr/bin/qrhythmcafe
+Icon=/usr/share/qrhythmcafe/ui/icon.png
+Terminal=False
+Categories=Accessories

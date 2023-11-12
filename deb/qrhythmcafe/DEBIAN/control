@@ -1,0 +1,6 @@
+Package: qrhythmcafe
+Version: 0.0.1
+Maintainer: chocolateimage
+Architecture: all
+Description: A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder
+Depends: python3, python3-requests, python3-pyqt5
