@@ -1,4 +1,6 @@
-# How can I run this?
+# QRhythmCafe
+
+## How can I run this?
 
 Download the .exe (or .deb if you're on linux) from the releases section: https://github.com/chocolateimage/qrhythmcafe/releases
 
