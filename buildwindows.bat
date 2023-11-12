@@ -1,0 +1,1 @@
+pyinstaller qrhythmcafe.py --onefile --windowed --icon ui/icon.png --add-data ui:ui
