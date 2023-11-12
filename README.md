@@ -1,5 +1,7 @@
 # QRhythmCafe
 
+![image](https://github.com/chocolateimage/qrhythmcafe/assets/45315451/3e0d0f64-20e0-49e4-ba22-6a74c44fc02d)
+
 ## How can I run this?
 
 Download the .exe (or .deb if you're on linux) from the releases section: https://github.com/chocolateimage/qrhythmcafe/releases
