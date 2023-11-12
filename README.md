@@ -1,4 +1,8 @@
-# Developing
+# How can I run this?
+
+Download the .exe (or .deb if you're on linux) from the releases section: https://github.com/chocolateimage/qrhythmcafe/releases
+
+## Developing
 You will need Python for this during development.
 
 #### Linux
@@ -11,6 +15,12 @@ On windows you need to install PyQT5 and requests with pip:
 `pip install PyQT5 requests`
 
 ## Building
+
+#### Windows
+
+1. Install "pyinstaller": `pip install pyinstaller`
+2. Run "buildwindows.bat"
+3. In the dist folder there should be a file with the name of "qrhythmcafe.exe"
 
 #### Linux
 
