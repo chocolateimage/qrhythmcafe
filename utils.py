@@ -9,7 +9,7 @@ import zipfile
 import os
 import shutil
 
-VERSION_NUMBER = "0.0.1"
+VERSION_NUMBER = "0.0.2"
 
 def get_temp_folder():
     if hasgi:
