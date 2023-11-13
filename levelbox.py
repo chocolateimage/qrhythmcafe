@@ -101,7 +101,7 @@ class LevelBox(fancyframe.FancyFrame):
     def add_author(self,author):
         self.add_metadata("ui/user-solid.svg",author,onclick=lambda: self.change_facet_author(author))
     def load_extra(self):
-        filepath = "temp/" + self.data["id"] + ".png"
+        filepath = utils.get_temp_folder() + "/" + self.data["id"] + ".png"
         if not os.path.exists(filepath):
             urllib.request.urlretrieve(self.data["image"],filepath)
         thumbnailtext: QtWidgets.QLabel = self.thumbnail

@@ -11,6 +11,15 @@ import shutil
 
 VERSION_NUMBER = "0.0.1"
 
+def get_temp_folder():
+    if hasgi:
+        path = GLib.get_user_cache_dir() + "/qrhythmcafe_temp"
+    else:
+        path = str(Path.home()) + "/AppData/Local/Temp/qrhythmcafe_temp"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+
 def get_rd_levels_folder():
     if hasgi:
         return GLib.get_user_special_dir(GLib.USER_DIRECTORY_DOCUMENTS) + "/Rhythm Doctor/Levels"
@@ -38,7 +47,7 @@ def get_available_rd_level_name(data):
     return None
 
 def download_rd_level(data):
-    rdzippath = "temp/" + data["id"] + ".rdzip"
+    rdzippath = get_temp_folder() + "/" + data["id"] + ".rdzip"
     levelpath = get_rd_level_folder(data["id"])
     urllib.request.urlretrieve(data["url2"],rdzippath)
     with zipfile.ZipFile(rdzippath,"r") as z:

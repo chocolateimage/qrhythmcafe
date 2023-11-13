@@ -35,8 +35,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi("ui/mainwindow.ui",self)
-        if not os.path.exists("temp"):
-            os.mkdir("temp")
         self.setWindowIcon(QtGui.QIcon("ui/icon.png"))
         self.scrollarea: QtWidgets.QScrollArea = self.scrollArea
         self.vlay: QtWidgets.QWidget = self.verticalLayoutWidget
