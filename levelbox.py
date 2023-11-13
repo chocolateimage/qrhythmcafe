@@ -46,6 +46,8 @@ class LevelBox(fancyframe.FancyFrame):
         uic.loadUi("ui/levelbox.ui",self)
         self.data = data
         self.mw = mw
+        self.isDestroyed = []
+        self.destroyed.connect(lambda: self.isDestroyed.append(True)) # extremely hacky way
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
         self.layoutMetadata = flowlayout.FlowLayout(self.widgetMetadata,0,0,0)
@@ -130,7 +132,7 @@ class LevelBox(fancyframe.FancyFrame):
     def is_installed(self):
         return utils.get_available_rd_level_name(self.data) != None
     def download_click(self):
-        self.loadingmovie = QtGui.QMovie("ui/loading.gif")
+        self.loadingmovie = QtGui.QMovie("ui/loading.gif",parent=self)
         self.loadingmovie.frameChanged.connect(lambda x: self.btnDownload.setIcon(QtGui.QIcon(self.loadingmovie.currentPixmap())))
         self.btnDownload.setDisabled(True)
         self.loadingmovie.start()
@@ -146,7 +148,9 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload.setDisabled(False)
     def _download(self):
         utils.download_rd_level(self.data)
-        
+        if len(self.isDestroyed) > 0:
+            print("download finished and levelbox is destroyed")
+            return
         self.loadingmovie.stop()
         self.update_download_button()
         self.btnDownload.setDisabled(False)
