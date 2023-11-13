@@ -6,4 +6,4 @@ Comment=A desktop version of rhythm.cafe to download levels directly into the Rh
 Exec=/usr/bin/qrhythmcafe
 Icon=/usr/share/qrhythmcafe/ui/icon.png
 Terminal=False
-Categories=Accessories
+Categories=Utility
