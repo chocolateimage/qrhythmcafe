@@ -6,6 +6,7 @@ if __name__ == "__main__": # make imports work when opening from another directo
     os.chdir(dname)
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette, QColor
 import requests
 import flowlayout
 import levelbox
