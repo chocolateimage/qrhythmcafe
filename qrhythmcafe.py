@@ -37,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         uic.loadUi("ui/mainwindow.ui",self)
         self.setWindowIcon(QtGui.QIcon("ui/icon.png"))
         self.scrollarea: QtWidgets.QScrollArea = self.scrollArea
+        self.scrollarea.verticalScrollBar().valueChanged.connect(self.onMainScroll)
         self.vlay: QtWidgets.QWidget = self.verticalLayoutWidget
         self.thething: QtWidgets.QWidget = self.thething
         self.thething.layout().setAlignment(Qt.AlignTop)
@@ -45,20 +46,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
-        self.navPrev.clicked.connect(lambda: self.navChange(-1))
-        self.navNext.clicked.connect(lambda: self.navChange(1))
+        #self.navPrev.clicked.connect(lambda: self.navChange(-1))
+        #self.navNext.clicked.connect(lambda: self.navChange(1))
         self.shareddata = {
             "facet": {
 
             },
             "onlyreviewed":False,
-            "page":1
+            "page":1,
+            "maxpage":1,
+            "ispageloading":False
         }
         self.reloadLevels()
         self.txtSearch: QtWidgets.QLineEdit = self.txtSearch
         self.txtSearch.textChanged.connect(lambda x: self.onsearchchanged())
         self.txtSearch.returnPressed.connect(self.onsearchpress)
         self.searchTimer = None
+    def onMainScroll(self,value):
+        diff = self.scrollarea.verticalScrollBar().maximum() - value
+        if diff < 500:
+            if self.shareddata["ispageloading"] == False:
+                if self.shareddata["page"] != self.shareddata["maxpage"]:
+                    self.navChange(1)
     def showabout(self):
         QtWidgets.QMessageBox.about(self,"About QRhythmCafe","A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder\n\nVersion " + utils.VERSION_NUMBER)
     def showaboutqt(self):
@@ -110,52 +119,63 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDisabled(True)
         if resetpage:
             self.shareddata["page"] = 1
+        self.shareddata["ispageloading"] = True
         class ReloadLevelsThread(QtCore.QThread):
             finished = QtCore.pyqtSignal(object)
             def run(this):
                 print("searching")
                 this.finished.emit(self.makeSearchRequest())
         self.t = ReloadLevelsThread()
-        self.t.finished.connect(self._reloadLevels)
+        self.t.finished.connect(lambda a: self._reloadLevels(a,resetpage))
         self.t.start()
         #threading.Thread(target=self._reloadLevels).start()
-    def _reloadLevels(self,js):
+    def _reloadLevels(self,js,resetpage):
         self.setDisabled(False)
+        self.shareddata["ispageloading"] = False
+        
         if len(js["hits"]) == 0:
             maxpage = 1
         else:
             maxpage = math.ceil(js["found"] / len(js["hits"]))
+        
+        if resetpage:
+            self.shareddata["maxpage"] = maxpage
+
         if js["request_params"]["q"] == "":
             self.navFound.setText("")
         else:
             self.navFound.setText(str(js["found"]) + " levels found for " + js["request_params"]["q"])
-        if maxpage == 1:
+        """if maxpage == 1:
             self.navText.setText("")
         else:
             self.navText.setText(str(self.shareddata["page"]) + " of " + str(maxpage))
         self.navPrev.setVisible(self.shareddata["page"] > 1)
-        self.navNext.setVisible(self.shareddata["page"] < maxpage)
+        self.navNext.setVisible(self.shareddata["page"] < maxpage)"""
 
-        for i in self.thething.children():
-            if type(i) == facet.Facet or type(i) == facet.PeerReviewedWidget:
-                i.deleteLater()
-        for i in js["facet_counts"]:
-            if i["field_name"] == "source":
-                continue
-            if i["field_name"] not in self.shareddata["facet"]:
-                self.shareddata["facet"][i["field_name"]] = []
-            
-            f = facet.Facet(i,self)
-            self.thething.layout().addWidget(f)
-        self.thething.layout().addWidget(facet.PeerReviewedWidget(self))
-        for i in self.vlay.children():
-            if type(i) == levelbox.LevelBox:
-                #self.vlaylayout.removeWidget(i)
-                i.deleteLater()
+        if resetpage:
+            for i in self.thething.children():
+                if type(i) == facet.Facet or type(i) == facet.PeerReviewedWidget:
+                    i.deleteLater()
+            for i in js["facet_counts"]:
+                if i["field_name"] == "source":
+                    continue
+                if i["field_name"] not in self.shareddata["facet"]:
+                    self.shareddata["facet"][i["field_name"]] = []
+                
+                f = facet.Facet(i,self)
+                self.thething.layout().addWidget(f)
+            self.thething.layout().addWidget(facet.PeerReviewedWidget(self))
+
+            for i in self.vlay.children():
+                if type(i) == levelbox.LevelBox:
+                    #self.vlaylayout.removeWidget(i)
+                    i.deleteLater()
+        
         for i in js["hits"]:
             lb = levelbox.LevelBox(i["document"],self)
             self.vlaylayout.addWidget(lb)
-        self.scrollarea.verticalScrollBar().setValue(0)
+        if resetpage:
+            self.scrollarea.verticalScrollBar().setValue(0)
 
         
 if __name__ == "__main__":
