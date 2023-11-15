@@ -67,7 +67,7 @@ class LevelBox(fancyframe.FancyFrame):
             "139, 92, 246, 0.3",
         ][self.data["difficulty"]]
         self.labelDifficulty.setStyleSheet("background-color: rgba("+difficultycolor+");padding: 2px 4px;")
-        threading.Thread(target=self.load_extra).start()
+        self.load_extra()
         for i in self.data["authors"]:
             self.add_author(i)
         bpmtext = self.get_float_string(self.data["min_bpm"]) + "-" + self.get_float_string(self.data["max_bpm"])
@@ -105,7 +105,10 @@ class LevelBox(fancyframe.FancyFrame):
     def load_extra(self):
         filepath = utils.get_temp_folder() + "/" + self.data["id"] + ".png"
         if not os.path.exists(filepath):
-            urllib.request.urlretrieve(self.data["image"],filepath)
+            proc = utils.ThumbnailDownloadProcess(self.data)
+            proc.finished.connect(lambda: self.load_extra())
+            utils._mtd.add_to_queue(proc)
+            return
         thumbnailtext: QtWidgets.QLabel = self.thumbnail
         thumbnailtext.setText("")
         thumbnailtext.setPixmap(QtGui.QPixmap(filepath))

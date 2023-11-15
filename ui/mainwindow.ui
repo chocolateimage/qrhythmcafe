@@ -261,6 +261,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionDownload_all_levels"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -297,6 +299,11 @@
   <action name="actionAbout_QT">
    <property name="text">
     <string>About QT</string>
+   </property>
+  </action>
+  <action name="actionDownload_all_levels">
+   <property name="text">
+    <string>Download all levels</string>
    </property>
   </action>
  </widget>

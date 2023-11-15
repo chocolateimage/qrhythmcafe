@@ -45,13 +45,13 @@ class MultiThreadedDownload(QObject):
             print("trying to finish this thread (locking 5)")
             _mtd.lock.lock()
             _mtd.threads.remove(self)
-            _mtd.finishedthreads.append(self)
             print("unlocking (5)")
             _mtd.lock.unlock()
             print("finished with this thread!")
+            del self
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self,parent):
+        super().__init__(parent=parent)
         self.downloadqueue = []
         self.isdownloading = []
         self.downloadfinished = []
@@ -62,11 +62,11 @@ class MultiThreadedDownload(QObject):
     def add_to_queue(self,downloadprocess):
         newthread = None
         print("threads",len(self.threads))
-        if len(self.threads) < 7:
-            print("under 7 threads, creating new")
+        if len(self.threads) < 10:
+            print("under 10 threads, creating new")
             self.lock.lock()
             print("created...")
-            newthread = MultiThreadedDownload.DownloadThread()
+            newthread = MultiThreadedDownload.DownloadThread(self)
             self.threads.append(newthread)
             print("unlocking... (1)")
             self.lock.unlock()
@@ -88,15 +88,30 @@ class DownloadProcess(QObject):
         self.is_started = False
         self.is_finished = False
     def _bgdownload(self):
+        pass
+
+class ThumbnailDownloadProcess(DownloadProcess):
+    def _bgdownload(self):
+        filepath = get_temp_folder() + "/" + self.data["id"] + ".png"
+        urllib.request.urlretrieve(self.data["thumb"],filepath)
+
+class LevelDownloadProcess(DownloadProcess):
+    def _bgdownload(self):
         data = self.data
+        print("LevelDownloadProcess: getting temp")
         rdzippath = get_temp_folder() + "/" + data["id"] + ".rdzip"
+        print("LevelDownloadProcess: getting rd level folder")
         levelpath = get_rd_level_folder(data["id"])
+        print("LevelDownloadProcess: downloading...")
         urllib.request.urlretrieve(data["url2"],rdzippath)
+        print("LevelDownloadProcess: extracting zip...")
         with zipfile.ZipFile(rdzippath,"r") as z:
             z.extractall(levelpath)
+        print("LevelDownloadProcess: removing...")
         os.remove(rdzippath)
+        print("LevelDownloadProcess: finished")
 
-_mtd = MultiThreadedDownload()
+_mtd = None
 
 def get_temp_folder():
     if hasgi:
@@ -134,7 +149,7 @@ def get_available_rd_level_name(data):
     return None
 
 def download_rd_level(data,onfinish):
-    downloadprocess = DownloadProcess(data)
+    downloadprocess = LevelDownloadProcess(data)
     downloadprocess.finished.connect(onfinish)
     _mtd.add_to_queue(downloadprocess)
     return downloadprocess

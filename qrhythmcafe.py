@@ -36,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi("ui/mainwindow.ui",self)
+        utils._mtd = utils.MultiThreadedDownload(self)
         self.setWindowIcon(QtGui.QIcon("ui/icon.png"))
         self.scrollarea: QtWidgets.QScrollArea = self.scrollArea
         self.scrollarea.verticalScrollBar().valueChanged.connect(self.onMainScroll)
@@ -47,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
+        self.actionDownload_all_levels.triggered.connect(lambda: self.download_all())
         self.btnDownloads: QtWidgets.QPushButton = self.btnDownloads
         if os.name == "nt":
             self.btnDownloads.setIcon(QtGui.QIcon("ui/bars-progress-solid.svg"))
@@ -75,6 +77,22 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.shareddata["ispageloading"] == False:
                 if self.shareddata["page"] != self.shareddata["maxpage"]:
                     self.navChange(1)
+    def download_all(self):
+        if QtWidgets.QMessageBox.question(self,"CRASH WARNING!","Downloading all levels can crash the program.\nAre you sure you want to continue?") != QtWidgets.QMessageBox.StandardButton.Yes:
+            print("aborted")
+            return
+        while self.shareddata["page"] != self.shareddata["maxpage"]:
+            print("DOWNLOADING ALL PAGE ",self.shareddata["page"])
+            self.setStatusTip("Loading all levels ("+str(self.shareddata["page"])+"/"+str(self.shareddata["maxpage"])+")...")
+            self.shareddata["page"] += 1
+            self._reloadLevels(self.makeSearchRequest(),False)
+        for i in self.vlay.children():
+            if type(i) == levelbox.LevelBox:
+                lb: levelbox.LevelBox = i
+                if not lb.is_installed():
+                    lb.download_click()
+        self.setStatusTip("")
+    
     def on_download_queue_updated(self):
         utils._mtd.lock.lock()
         self.btnDownloads.setText(str(len(utils._mtd.downloadqueue) + len(utils._mtd.isdownloading)))
@@ -125,6 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
             params["facet_query"] = facet_query
         print(params)
         response = requests.get('https://api.rhythm.cafe/typesense/collections/levels/documents/search', params=params, headers=headers)
+        print("got request")
         return response.json()
     def onsearchpress(self):
         self.onsearchchanged(0)
@@ -192,10 +211,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 if type(i) == levelbox.LevelBox:
                     #self.vlaylayout.removeWidget(i)
                     i.deleteLater()
-        
+        print("adding levelboxes...")
         for i in js["hits"]:
             lb = levelbox.LevelBox(i["document"],self)
             self.vlaylayout.addWidget(lb)
+        print("done")
         if resetpage:
             self.scrollarea.verticalScrollBar().setValue(0)
 
