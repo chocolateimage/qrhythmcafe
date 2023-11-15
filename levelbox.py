@@ -109,6 +109,14 @@ class LevelBox(fancyframe.FancyFrame):
         thumbnailtext: QtWidgets.QLabel = self.thumbnail
         thumbnailtext.setText("")
         thumbnailtext.setPixmap(QtGui.QPixmap(filepath))
+    def after_download(self):
+        print("after download")
+        if len(self.isDestroyed) > 0:
+            print("download finished and levelbox is destroyed")
+            return
+        self.loadingmovie.stop()
+        self.update_download_button()
+        self.btnDownload.setDisabled(False)
     def update_download_button(self):
         QtCore.QTimer.singleShot(0,self.update_download_button_)
     def update_download_button_(self):
@@ -137,20 +145,18 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload.setDisabled(True)
         self.loadingmovie.start()
         if self.is_installed():
-            threading.Thread(target=self._remove).start()
+            self._remove()
         else:
-            threading.Thread(target=self._download).start()
+            self._download()
     def _remove(self):
         utils.remove_rd_level(self.data)
+        self.after_download()
 
-        self.loadingmovie.stop()
-        self.update_download_button()
-        self.btnDownload.setDisabled(False)
     def _download(self):
-        utils.download_rd_level(self.data)
-        if len(self.isDestroyed) > 0:
+        utils.download_rd_level(self.data,lambda: self.after_download())
+        """if len(self.isDestroyed) > 0:
             print("download finished and levelbox is destroyed")
             return
         self.loadingmovie.stop()
         self.update_download_button()
-        self.btnDownload.setDisabled(False)
+        self.btnDownload.setDisabled(False)"""
