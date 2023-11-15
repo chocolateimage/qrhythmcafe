@@ -13,7 +13,8 @@ from PyQt5.QtCore import QObject, QThread, QMutex, pyqtSignal
 VERSION_NUMBER = "0.0.2"
 
 
-class MultiThreadedDownload():
+class MultiThreadedDownload(QObject):
+    queueupdated = pyqtSignal()
     class DownloadThread(QThread):
         def run(self):
             while True:
@@ -28,6 +29,7 @@ class MultiThreadedDownload():
                 downloadprocess.is_started = True
                 print("unlocking (3.2)")
                 _mtd.lock.unlock()
+                _mtd.queueupdated.emit()
                 print("doing bg download")
                 downloadprocess._bgdownload()
                 downloadprocess.is_finished = True
@@ -39,6 +41,7 @@ class MultiThreadedDownload():
                 _mtd.downloadfinished.append(downloadprocess)
                 print("unlocking (4)")
                 _mtd.lock.unlock()
+                _mtd.queueupdated.emit()
             print("trying to finish this thread (locking 5)")
             _mtd.lock.lock()
             _mtd.threads.remove(self)
@@ -48,13 +51,14 @@ class MultiThreadedDownload():
             print("finished with this thread!")
     
     def __init__(self):
+        super().__init__()
         self.downloadqueue = []
         self.isdownloading = []
         self.downloadfinished = []
         self.lock = QMutex()
         self.threads = []
         self.finishedthreads = [] # needs weirdly else it crashes
-    
+
     def add_to_queue(self,downloadprocess):
         newthread = None
         print("threads",len(self.threads))
@@ -74,6 +78,7 @@ class MultiThreadedDownload():
         if newthread != None:
             print("starting new thread... " + str(len(self.threads)) + " threads now")
             newthread.start(QThread.Priority.LowPriority)
+        self.queueupdated.emit()
 
 class DownloadProcess(QObject):
     finished = pyqtSignal()

@@ -47,6 +47,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
+        self.btnDownloads: QtWidgets.QPushButton = self.btnDownloads
+        if os.name == "nt":
+            self.btnDownloads.setIcon(QtGui.QIcon("ui/bars-progress-solid.svg"))
+        self.btnDownloads.clicked.connect(self.on_download_queue_clicked)
+        utils._mtd.queueupdated.connect(self.on_download_queue_updated)
+        #self.btnDownloads.setStyleSheet("color: #55aaff;font-weight:bold;")
         #self.navPrev.clicked.connect(lambda: self.navChange(-1))
         #self.navNext.clicked.connect(lambda: self.navChange(1))
         self.shareddata = {
@@ -69,6 +75,21 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.shareddata["ispageloading"] == False:
                 if self.shareddata["page"] != self.shareddata["maxpage"]:
                     self.navChange(1)
+    def on_download_queue_updated(self):
+        utils._mtd.lock.lock()
+        self.btnDownloads.setText(str(len(utils._mtd.downloadqueue) + len(utils._mtd.isdownloading)))
+        utils._mtd.lock.unlock()
+    
+    def on_download_queue_clicked(self):
+        utils._mtd.lock.lock()
+        text = "In queue: " + str(len(utils._mtd.downloadqueue)) + "\n"
+        text += "Is downloading: " + str(len(utils._mtd.isdownloading)) + "\n"
+        text += "Finished: " + str(len(utils._mtd.downloadfinished)) + "\n\n"
+        text += "Not finished: " + str(len(utils._mtd.downloadqueue) + len(utils._mtd.isdownloading)) + "\n"
+        text += "Total: " + str(len(utils._mtd.downloadqueue) + len(utils._mtd.isdownloading) + len(utils._mtd.downloadfinished))
+        utils._mtd.lock.unlock()
+        QtWidgets.QMessageBox.information(self,"Download queue info",text)
+
     def showabout(self):
         QtWidgets.QMessageBox.about(self,"About QRhythmCafe","A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder\n\nVersion " + utils.VERSION_NUMBER)
     def showaboutqt(self):
