@@ -47,6 +47,24 @@ class LevelBox(fancyframe.FancyFrame):
         self.data = data
         self.mw = mw
         self.isDestroyed = []
+        self.descriptionScrollArea = QtWidgets.QScrollArea(self)
+        self.descriptionScrollArea.setFixedSize(self.thumbnail.minimumSize())
+        self.descriptionScrollArea.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.descriptionScrollArea.setStyleSheet("QScrollArea {background: rgba(0,0,0,0.2);}")
+        self.descriptionScrollArea.setVisible(True)
+        self.descriptionWidget = QtWidgets.QWidget()
+        self.descriptionLayout = QtWidgets.QVBoxLayout(self.descriptionWidget)
+        self.descriptionLayout.setAlignment(QtCore.Qt.AlignTop)
+        self.descriptionLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+        self.descriptionScrollArea.setWidget(self.descriptionWidget)
+        self.descriptionLabel = QtWidgets.QLabel(self.descriptionScrollArea)
+        self.descriptionLabel.setText(self.data["description"] * 10)
+        self.descriptionLabel.setWordWrap(True)
+        self.descriptionLabel.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.descriptionLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
+        self.descriptionLayout.addWidget(self.descriptionLabel)
+
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_Hover,True)
         self.destroyed.connect(lambda: self.isDestroyed.append(True)) # extremely hacky way
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
@@ -85,6 +103,12 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload: QtWidgets.QPushButton = self.btnDownload # just for allowing auto complete in vs code
         self.btnDownload.clicked.connect(self.download_click)
         self.update_download_button()
+    def enterEvent(self, a0: QtCore.QEvent) -> None:
+        self.descriptionScrollArea.setVisible(True)
+        return super().enterEvent(a0)
+    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+        self.descriptionScrollArea.setVisible(False)
+        return super().leaveEvent(a0)
     def change_facet_approval(self,onlyreviewed):
         self.mw.shareddata["onlyreviewed"] = onlyreviewed
         self.mw.reloadLevels()
