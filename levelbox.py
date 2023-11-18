@@ -47,22 +47,14 @@ class LevelBox(fancyframe.FancyFrame):
         self.data = data
         self.mw = mw
         self.isDestroyed = []
-        self.descriptionScrollArea = QtWidgets.QScrollArea(self)
-        self.descriptionScrollArea.setFixedSize(self.thumbnail.minimumSize())
-        self.descriptionScrollArea.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
-        self.descriptionScrollArea.setStyleSheet("QScrollArea {background: rgba(0,0,0,0.2);}")
-        self.descriptionScrollArea.setVisible(True)
-        self.descriptionWidget = QtWidgets.QWidget()
-        self.descriptionLayout = QtWidgets.QVBoxLayout(self.descriptionWidget)
-        self.descriptionLayout.setAlignment(QtCore.Qt.AlignTop)
-        self.descriptionLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
-        self.descriptionScrollArea.setWidget(self.descriptionWidget)
-        self.descriptionLabel = QtWidgets.QLabel(self.descriptionScrollArea)
-        self.descriptionLabel.setText(self.data["description"] * 10)
-        self.descriptionLabel.setWordWrap(True)
-        self.descriptionLabel.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
-        self.descriptionLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
-        self.descriptionLayout.addWidget(self.descriptionLabel)
+        self.descriptionText = QtWidgets.QTextEdit(self)
+        self.descriptionText.setReadOnly(True)
+        self.descriptionText.setMarkdown(self.data["description"])
+        self.descriptionText.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.descriptionText.setStyleSheet("QTextEdit {background: rgba(0,0,0,0.8);font-size: 14px;}")
+        self.descriptionText.setFixedSize(self.thumbnail.minimumSize())
+        self.descriptionText.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.descriptionText.setVisible(False)
 
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_Hover,True)
         self.destroyed.connect(lambda: self.isDestroyed.append(True)) # extremely hacky way
@@ -104,10 +96,11 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload.clicked.connect(self.download_click)
         self.update_download_button()
     def enterEvent(self, a0: QtCore.QEvent) -> None:
-        self.descriptionScrollArea.setVisible(True)
+        if self.descriptionText.toPlainText() != "":
+            self.descriptionText.setVisible(True)
         return super().enterEvent(a0)
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
-        self.descriptionScrollArea.setVisible(False)
+        self.descriptionText.setVisible(False)
         return super().leaveEvent(a0)
     def change_facet_approval(self,onlyreviewed):
         self.mw.shareddata["onlyreviewed"] = onlyreviewed
