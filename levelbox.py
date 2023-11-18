@@ -47,6 +47,16 @@ class LevelBox(fancyframe.FancyFrame):
         self.data = data
         self.mw = mw
         self.isDestroyed = []
+        self.descriptionText = QtWidgets.QTextEdit(self)
+        self.descriptionText.setReadOnly(True)
+        self.descriptionText.setMarkdown(self.data["description"])
+        self.descriptionText.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.descriptionText.setStyleSheet("QTextEdit {background: rgba(0,0,0,0.8);font-size: 14px;}")
+        self.descriptionText.setFixedSize(self.thumbnail.minimumSize())
+        self.descriptionText.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.descriptionText.setVisible(False)
+
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_Hover,True)
         self.destroyed.connect(lambda: self.isDestroyed.append(True)) # extremely hacky way
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
@@ -85,6 +95,13 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload: QtWidgets.QPushButton = self.btnDownload # just for allowing auto complete in vs code
         self.btnDownload.clicked.connect(self.download_click)
         self.update_download_button()
+    def enterEvent(self, a0: QtCore.QEvent) -> None:
+        if self.descriptionText.toPlainText() != "":
+            self.descriptionText.setVisible(True)
+        return super().enterEvent(a0)
+    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+        self.descriptionText.setVisible(False)
+        return super().leaveEvent(a0)
     def change_facet_approval(self,onlyreviewed):
         self.mw.shareddata["onlyreviewed"] = onlyreviewed
         self.mw.reloadLevels()
