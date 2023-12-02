@@ -143,7 +143,10 @@ class LevelBox(fancyframe.FancyFrame):
             if os.name == "nt":
                 self.btnDownload.setIcon(QtGui.QIcon("ui/download-solid.svg"))
             else:
-                self.btnDownload.setIcon(QtGui.QIcon.fromTheme("download"))
+                if QtGui.QIcon.hasThemeIcon("download"):
+                    self.btnDownload.setIcon(QtGui.QIcon.fromTheme("download"))
+                else:
+                    self.btnDownload.setIcon(QtGui.QIcon.fromTheme("folder-download-symbolic"))
             self.bgcolor = None
         self.repaint()
     def is_installed(self):
