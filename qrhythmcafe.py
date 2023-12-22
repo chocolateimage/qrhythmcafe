@@ -103,7 +103,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if facet_query != None:
             params["facet_query"] = facet_query
         print(params)
-        response = requests.get('https://api.rhythm.cafe/typesense/collections/levels/documents/search', params=params, headers=headers)
+        response = requests.get('https://orchardb.fly.dev/typesense/collections/levels/documents/search', params=params, headers=headers)
         return response.json()
     def onsearchpress(self):
         self.onsearchchanged(0)
