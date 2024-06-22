@@ -10,7 +10,13 @@ class LevelBoxMetadata(QtWidgets.QPushButton):
     def __init__(self,icon,text,onclick=None,tooltip=None):
         super().__init__(" " + text) # " " is a lazy way to fix icon spacing
         self.setFlat(True)
-        self.setIcon(QtGui.QIcon(icon))
+
+        icon_darkmode = icon.replace(".svg","") + "-darkmode.svg"
+        if utils.is_dark_mode() and os.path.exists(icon_darkmode):
+            self.setIcon(QtGui.QIcon(icon_darkmode))
+        else:
+            self.setIcon(QtGui.QIcon(icon))
+        
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         if tooltip != None:
             self.setToolTip(tooltip)

@@ -8,6 +8,8 @@ import urllib.request
 import zipfile
 import os
 import shutil
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QPalette
 
 VERSION_NUMBER = "0.1.0"
 
@@ -60,3 +62,10 @@ def remove_rd_level(data):
         return
     path = get_rd_level_folder(foldername)
     shutil.rmtree(path)
+
+def is_dark_mode():
+    app = QApplication.instance()
+    palette = app.palette()
+    background_color = palette.color(QPalette.ColorRole.Window)
+    brightness = (background_color.red() + background_color.green() + background_color.blue()) / 3
+    return brightness < 128
