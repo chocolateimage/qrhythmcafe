@@ -50,6 +50,11 @@ class LevelBox(fancyframe.FancyFrame):
     def __init__(self,data,mw):
         super().__init__()
         uic.loadUi("ui/levelbox.ui",self)
+
+        self.labelArtist: QtWidgets.QLabel
+        self.labelDifficulty: QtWidgets.QLabel
+        self.horizontalLayout: QtWidgets.QHBoxLayout
+
         self.data = data
         self.mw = mw
         self.isDestroyed = []
@@ -68,21 +73,24 @@ class LevelBox(fancyframe.FancyFrame):
         self.layout().setAlignment(QtCore.Qt.AlignTop)
         self.layoutMetadata = flowlayout.FlowLayout(self.widgetMetadata,0,0,0)
         self.layoutMetadata.setAlignment(QtCore.Qt.AlignTop)
+        self.layoutMetadata.setContentsMargins(8,0,8,0)
         self.layoutTags = flowlayout.FlowLayout(self.widgetTags,0,4,4)
         self.layoutTags.setAlignment(QtCore.Qt.AlignTop)
+        self.layoutTags.setContentsMargins(8,0,8,0)
         self.bottompart.layout().setAlignment(QtCore.Qt.AlignTop)
         self.labelId.setText(self.data["id"])
         self.labelId.setStyleSheet("color: rgba(128,128,128,0.4)")
         self.labelSong.setText(self.data["song"])
         self.labelArtist.setText(self.data["artist"])
+        opacityEffect = QtWidgets.QGraphicsOpacityEffect(self.labelArtist)
+        opacityEffect.setOpacity(0.7)
+        self.labelArtist.setGraphicsEffect(opacityEffect)
         self.labelDifficulty.setText(["Easy","Medium","Tough","Very Tough"][self.data["difficulty"]])
-        difficultycolor = [
-            "13, 148, 136, 0.3",
-            "217, 119, 6, 0.3",
-            "244, 63, 94, 0.3",
-            "139, 92, 246, 0.3",
-        ][self.data["difficulty"]]
-        self.labelDifficulty.setStyleSheet("background-color: rgba("+difficultycolor+");padding: 2px 4px;")
+        self.labelDifficulty.setStyleSheet("padding: 2px 4px 2px 10px; font-weight: 500;")
+        self.labelDifficulty.installEventFilter(self)
+
+        self.horizontalLayout.setAlignment(self.labelDifficulty, QtCore.Qt.AlignmentFlag.AlignTop)
+
         threading.Thread(target=self.load_extra).start()
         for i in self.data["authors"]:
             self.add_author(i)
@@ -101,6 +109,30 @@ class LevelBox(fancyframe.FancyFrame):
         self.btnDownload: QtWidgets.QPushButton = self.btnDownload # just for allowing auto complete in vs code
         self.btnDownload.clicked.connect(self.download_click)
         self.update_download_button()
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent):
+        if watched == self.labelDifficulty:
+            if isinstance(event, QtGui.QPaintEvent):
+                difficultycolor = [
+                    QtGui.QColor(13, 148, 136, 130),
+                    QtGui.QColor(217, 119, 6, 130),
+                    QtGui.QColor(244, 63, 94, 130),
+                    QtGui.QColor(139, 92, 246, 130),
+                ][self.data["difficulty"]]
+                p = QtGui.QPainter(self.labelDifficulty)
+
+                poly = QtGui.QPolygonF()
+                poly.append(QtCore.QPointF(0,0))
+                poly.append(QtCore.QPointF(self.labelDifficulty.height() / 2,self.labelDifficulty.height()))
+                poly.append(QtCore.QPointF(self.labelDifficulty.width(),self.labelDifficulty.height()))
+                poly.append(QtCore.QPointF(self.labelDifficulty.width(),0))
+
+                path = QtGui.QPainterPath()
+                path.addPolygon(poly)
+
+                p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+                p.fillPath(path,difficultycolor)
+        return super().eventFilter(watched, event)
+
     def enterEvent(self, a0: QtCore.QEvent) -> None:
         if self.descriptionText.toPlainText() != "":
             self.descriptionText.setVisible(True)
