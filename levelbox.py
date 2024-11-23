@@ -72,7 +72,7 @@ class LevelBox(fancyframe.FancyFrame):
         self.descriptionText.setMarkdown(self.data["description"])
         self.descriptionText.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.descriptionText.setStyleSheet(
-            "QTextEdit {background: rgba(0,0,0,0.8);font-size: 14px;}"
+            "QTextEdit {background: rgba(0,0,0,0.8);color: white;font-size: 14px;}"
         )
         self.descriptionText.setFixedSize(self.thumbnail.minimumSize())
         self.descriptionText.setTextInteractionFlags(
