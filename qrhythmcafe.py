@@ -47,6 +47,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
+
+        self.loadingmovie = QtGui.QMovie("ui/loading.gif",parent=self)
+        self.loadingmovie.start()
+        self.loadingmovie.setScaledSize(QtCore.QSize(32,32))
+        self.loading_spinner = QtWidgets.QLabel(self.vlay)
+        self.loading_spinner.setMovie(self.loadingmovie)
+        self.loading_spinner.hide()
         self.shareddata = {
             "facet": {
 
@@ -54,7 +61,8 @@ class MainWindow(QtWidgets.QMainWindow):
             "onlyreviewed":False,
             "page":1,
             "maxpage":1,
-            "ispageloading":False
+            "ispageloading":False,
+            "latestpageloadid": 0
         }
         self.reloadLevels()
         self.txtSearch: QtWidgets.QLineEdit = self.txtSearch
@@ -115,21 +123,33 @@ class MainWindow(QtWidgets.QMainWindow):
         self.searchTimer.timeout.connect(self.reloadLevels)
         self.searchTimer.start()
     def reloadLevels(self,resetpage=True):
-        self.setDisabled(True)
         if resetpage:
             self.shareddata["page"] = 1
         self.shareddata["ispageloading"] = True
+        currentpageloadid = self.shareddata["latestpageloadid"] + 1
+        self.shareddata["latestpageloadid"] = currentpageloadid
+        if resetpage:
+            self.loading_spinner.move(int(self.rightsidething.width() / 2) - 16, int(self.rightsidething.height() / 2) - 16)
+            self.loading_spinner.raise_()
+        else:
+            self.vlaylayout.addWidget(self.loading_spinner)
+        self.loading_spinner.show()
         class ReloadLevelsThread(QtCore.QThread):
             finished = QtCore.pyqtSignal(object)
             def run(this):
                 print("searching")
                 this.finished.emit(self.makeSearchRequest())
         self.t = ReloadLevelsThread()
-        self.t.finished.connect(lambda a: self._reloadLevels(a,resetpage))
+        self.t.finished.connect(lambda a: self._reloadLevels(a,resetpage,currentpageloadid))
         self.t.start()
-    def _reloadLevels(self,js,resetpage):
-        self.setDisabled(False)
+    def _reloadLevels(self,js,resetpage,currentpageloadid):
+        if self.shareddata["latestpageloadid"] != currentpageloadid:
+            return
+
         self.shareddata["ispageloading"] = False
+        self.loading_spinner.hide()
+        if not resetpage:
+            self.vlaylayout.removeWidget(self.loading_spinner)
         
         if len(js["hits"]) == 0:
             maxpage = 1
