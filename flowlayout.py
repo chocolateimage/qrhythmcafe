@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
 
+
 class FlowLayout(QtWidgets.QLayout):
     def __init__(self, parent=None, margin=-1, hspacing=-1, vspacing=-1):
         super(FlowLayout, self).__init__(parent)
@@ -18,15 +19,13 @@ class FlowLayout(QtWidgets.QLayout):
         if self._hspacing >= 0:
             return self._hspacing
         else:
-            return self.smartSpacing(
-                QtWidgets.QStyle.PM_LayoutHorizontalSpacing)
+            return self.smartSpacing(QtWidgets.QStyle.PM_LayoutHorizontalSpacing)
 
     def verticalSpacing(self):
         if self._vspacing >= 0:
             return self._vspacing
         else:
-            return self.smartSpacing(
-                QtWidgets.QStyle.PM_LayoutVerticalSpacing)
+            return self.smartSpacing(QtWidgets.QStyle.PM_LayoutVerticalSpacing)
 
     def count(self):
         return len(self._items)
@@ -75,12 +74,16 @@ class FlowLayout(QtWidgets.QLayout):
             if hspace == -1:
                 hspace = widget.style().layoutSpacing(
                     QtWidgets.QSizePolicy.PushButton,
-                    QtWidgets.QSizePolicy.PushButton, QtCore.Qt.Horizontal)
+                    QtWidgets.QSizePolicy.PushButton,
+                    QtCore.Qt.Horizontal,
+                )
             vspace = self.verticalSpacing()
             if vspace == -1:
                 vspace = widget.style().layoutSpacing(
                     QtWidgets.QSizePolicy.PushButton,
-                    QtWidgets.QSizePolicy.PushButton, QtCore.Qt.Vertical)
+                    QtWidgets.QSizePolicy.PushButton,
+                    QtCore.Qt.Vertical,
+                )
             nextX = x + item.sizeHint().width() + hspace
             if nextX - hspace > effective.right() and lineheight > 0:
                 x = effective.x()
@@ -88,8 +91,7 @@ class FlowLayout(QtWidgets.QLayout):
                 nextX = x + item.sizeHint().width() + hspace
                 lineheight = 0
             if not testonly:
-                item.setGeometry(
-                    QtCore.QRect(QtCore.QPoint(x, y), item.sizeHint()))
+                item.setGeometry(QtCore.QRect(QtCore.QPoint(x, y), item.sizeHint()))
             x = nextX
             lineheight = max(lineheight, item.sizeHint().height())
         return y + lineheight - rect.y() + bottom
