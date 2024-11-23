@@ -47,8 +47,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
-        #self.navPrev.clicked.connect(lambda: self.navChange(-1))
-        #self.navNext.clicked.connect(lambda: self.navChange(1))
         self.shareddata = {
             "facet": {
 
@@ -129,7 +127,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.t = ReloadLevelsThread()
         self.t.finished.connect(lambda a: self._reloadLevels(a,resetpage))
         self.t.start()
-        #threading.Thread(target=self._reloadLevels).start()
     def _reloadLevels(self,js,resetpage):
         self.setDisabled(False)
         self.shareddata["ispageloading"] = False
@@ -146,12 +143,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.navFound.setText("")
         else:
             self.navFound.setText(str(js["found"]) + " levels found for " + js["request_params"]["q"])
-        """if maxpage == 1:
-            self.navText.setText("")
-        else:
-            self.navText.setText(str(self.shareddata["page"]) + " of " + str(maxpage))
-        self.navPrev.setVisible(self.shareddata["page"] > 1)
-        self.navNext.setVisible(self.shareddata["page"] < maxpage)"""
 
         if resetpage:
             for i in self.thething.children():
@@ -169,7 +160,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             for i in self.vlay.children():
                 if type(i) == levelbox.LevelBox:
-                    #self.vlaylayout.removeWidget(i)
                     i.deleteLater()
         
         for i in js["hits"]:
