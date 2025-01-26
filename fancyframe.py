@@ -13,5 +13,5 @@ class FancyFrame(QtWidgets.QWidget):
             painter.setPen(QtGui.QColor(128, 128, 128, 90))
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
         painter.setRenderHint(QtGui.QPainter.HighQualityAntialiasing)
-        painter.drawRoundedRect(0, 0, self.width() - 2, self.height() - 2, 6, 6)
+        painter.drawRoundedRect(0, 0, self.width(), self.height(), 8, 8)
         super().paintEvent(e)

@@ -225,9 +225,29 @@ class LevelBox(fancyframe.FancyFrame):
         filepath = utils.get_temp_folder() + "/" + self.data["id"] + ".png"
         if not os.path.exists(filepath):
             urllib.request.urlretrieve(self.data["image"], filepath)
+
         thumbnailtext: QtWidgets.QLabel = self.thumbnail
+        pixmap = QtGui.QPixmap(filepath).scaled(
+            thumbnailtext.width(),
+            thumbnailtext.height(),
+            transformMode=QtCore.Qt.TransformationMode.SmoothTransformation,
+        )
+        final_pixmap = QtGui.QPixmap(pixmap.width(), pixmap.height())
+        final_pixmap.fill(QtGui.QColor(255, 255, 255, 0))
+        with QtGui.QPainter(final_pixmap) as painter:
+            path = QtGui.QPainterPath()
+            painter.setRenderHint(QtGui.QPainter.Antialiasing)
+            painter.setRenderHint(QtGui.QPainter.HighQualityAntialiasing)
+            path.addRoundedRect(0, 0, final_pixmap.width(), final_pixmap.height(), 8, 8)
+            painter.setClipPath(path)
+            painter.drawPixmap(0, 0, pixmap)
+            painter.setClipping(False)
+            painter.drawPixmap(
+                0, 32, pixmap.copy(0, 32, pixmap.width(), pixmap.height() - 32)
+            )
+
         thumbnailtext.setText("")
-        thumbnailtext.setPixmap(QtGui.QPixmap(filepath))
+        thumbnailtext.setPixmap(final_pixmap)
 
     def update_download_button(self):
         QtCore.QTimer.singleShot(0, self.update_download_button_)
