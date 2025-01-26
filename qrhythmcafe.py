@@ -74,7 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onMainScroll(self, value):
         diff = self.scrollarea.verticalScrollBar().maximum() - value
-        if diff < 500:
+        if diff < 1000:
             if self.shareddata["ispageloading"] == False:
                 if self.shareddata["page"] != self.shareddata["maxpage"]:
                     self.navChange(1)
