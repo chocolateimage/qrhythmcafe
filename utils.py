@@ -83,3 +83,10 @@ def is_dark_mode():
         background_color.red() + background_color.green() + background_color.blue()
     ) / 3
     return brightness < 128
+
+
+def get_icon_path(icon_name):
+    if is_dark_mode():
+        return "ui/" + icon_name + "-darkmode.svg"
+    else:
+        return "ui/" + icon_name + "-lightmode.svg"

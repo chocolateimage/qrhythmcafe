@@ -12,11 +12,7 @@ class LevelBoxMetadata(QtWidgets.QPushButton):
         super().__init__(" " + text)  # " " is a lazy way to fix icon spacing
         self.setFlat(True)
 
-        icon_darkmode = icon.replace(".svg", "") + "-darkmode.svg"
-        if utils.is_dark_mode() and os.path.exists(icon_darkmode):
-            self.setIcon(QtGui.QIcon(icon_darkmode))
-        else:
-            self.setIcon(QtGui.QIcon(icon))
+        self.setIcon(QtGui.QIcon(utils.get_icon_path(icon)))
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         if tooltip != None:
@@ -125,16 +121,16 @@ class LevelBox(fancyframe.FancyFrame):
         )
         if self.data["min_bpm"] == self.data["max_bpm"]:
             bpmtext = self.get_float_string(self.data["min_bpm"])
-        self.add_metadata("ui/heart-solid.svg", bpmtext + " BPM")
+        self.add_metadata("heart", bpmtext + " BPM")
         if self.data["approval"] == -1:
             self.add_metadata(
-                "ui/x.svg",
+                "x",
                 "Non-Referred",
                 tooltip="Non-Referred: a trusted member of the community has checked for correct\nBPM/offset, metadata, and cues to ensure playability, and has found that this level\ndoes not meet standards.",
             )
         elif self.data["approval"] >= 10:
             self.add_metadata(
-                "ui/checkmark.svg",
+                "checkmark",
                 "Reviewed",
                 onclick=lambda: self.change_facet_approval(True),
                 tooltip="Peer-Reviewed: a trusted member of the community has checked for correct\nBPM/offset, metadata, and cues to ensure playability.",
@@ -216,7 +212,7 @@ class LevelBox(fancyframe.FancyFrame):
 
     def add_author(self, author):
         self.add_metadata(
-            "ui/user-solid.svg",
+            "user",
             author,
             onclick=lambda: self.change_facet_author(author),
         )
@@ -256,25 +252,24 @@ class LevelBox(fancyframe.FancyFrame):
         if self.is_installed():
             self.lblInstalled.setVisible(True)
             self.btnDownload.setToolTip("Uninstall")
-            if os.name == "nt":
-                self.btnDownload.setIcon(QtGui.QIcon("ui/trash-solid.svg"))
-            else:
+            if QtGui.QIcon.hasThemeIcon("user-trash-full-symbolic"):
                 self.btnDownload.setIcon(
                     QtGui.QIcon.fromTheme("user-trash-full-symbolic")
                 )
+            else:
+                self.btnDownload.setIcon(QtGui.QIcon(utils.get_icon_path("trash")))
             self.bgcolor = "green"
         else:
             self.lblInstalled.setVisible(False)
             self.btnDownload.setToolTip("Install")
-            if os.name == "nt":
-                self.btnDownload.setIcon(QtGui.QIcon("ui/download-solid.svg"))
+            if QtGui.QIcon.hasThemeIcon("download"):
+                self.btnDownload.setIcon(QtGui.QIcon.fromTheme("download"))
+            elif QtGui.QIcon.hasThemeIcon("folder-download-symbolic"):
+                self.btnDownload.setIcon(
+                    QtGui.QIcon.fromTheme("folder-download-symbolic")
+                )
             else:
-                if QtGui.QIcon.hasThemeIcon("download"):
-                    self.btnDownload.setIcon(QtGui.QIcon.fromTheme("download"))
-                else:
-                    self.btnDownload.setIcon(
-                        QtGui.QIcon.fromTheme("folder-download-symbolic")
-                    )
+                self.btnDownload.setIcon(QtGui.QIcon(utils.get_icon_path("download")))
             self.bgcolor = None
         self.repaint()
 
