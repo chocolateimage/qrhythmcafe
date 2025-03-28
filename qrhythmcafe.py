@@ -19,20 +19,12 @@ import webbrowser
 import math
 
 headers = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0",
     "Accept": "*/*",
     "Accept-Language": "en-GB,en;q=0.5",
-    # 'Accept-Encoding': 'gzip, deflate, br',
     "Referer": "https://rhythm.cafe/",
     "x-typesense-api-key": "nicolebestgirl",
     "Origin": "https://rhythm.cafe",
-    "DNT": "1",
-    "Connection": "keep-alive",
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-site",
-    # Requests doesn't support trailers
-    # 'TE': 'trailers',
 }
 
 
@@ -180,6 +172,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loading_spinner.hide()
         if not resetpage:
             self.vlaylayout.removeWidget(self.loading_spinner)
+
+        if "hits" not in js:
+            self.navFound.setText(
+                "An error has occured. If this keeps happening, file an issue here:\nhttps://github.com/chocolateimage/qrhythmcafe/issues/new/choose"
+            )
+            print()
+            print("-- An error occured --")
+            print(js)
+            print("-- An error occured (END) --")
+            print()
+            return
 
         if len(js["hits"]) == 0:
             maxpage = 1
