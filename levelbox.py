@@ -63,19 +63,34 @@ class LevelBox(fancyframe.FancyFrame):
         self.data = data
         self.mw = mw
         self.isDestroyed = []
-        self.descriptionText = QtWidgets.QTextEdit(self)
-        self.descriptionText.setReadOnly(True)
-        self.descriptionText.setMarkdown(self.data["description"])
-        self.descriptionText.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
-        self.descriptionText.setStyleSheet(
-            "QTextEdit {background: rgba(0,0,0,0.8);color: white;font-size: 14px;}"
-        )
-        self.descriptionText.setFixedSize(self.thumbnail.minimumSize())
-        self.descriptionText.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
-        )
-        self.descriptionText.setVisible(False)
+        if len(self.data["description"]) == 0:
+            self.descriptionText: QtWidgets.QTextEdit = None
+        else:
+            self.descriptionText = QtWidgets.QTextEdit(self)
+            self.descriptionText.setReadOnly(True)
+            self.descriptionText.setMarkdown(self.data["description"])
+            self.descriptionText.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+            self.descriptionText.setStyleSheet(
+                "QTextEdit {background: rgba(0,0,0,0.8); border-top-left-radius: 8px; border-top-right-radius: 8px; color: white;font-size: 14px;}"
+            )
+            self.descriptionText.setFixedSize(self.thumbnail.minimumSize())
+            self.descriptionText.setTextInteractionFlags(
+                QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
+                | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+            )
+            self.descriptionOpacityEffect = QtWidgets.QGraphicsOpacityEffect(
+                self.descriptionText
+            )
+            self.descriptionOpacityEffect.setOpacity(0)
+            self.descriptionOpacityAnimation = QtCore.QPropertyAnimation(
+                self.descriptionOpacityEffect,
+                "opacity".encode(),  # Don't ask me why I need to encode a property name...
+                self.descriptionOpacityEffect,
+            )
+            self.descriptionOpacityAnimation.setStartValue(0)
+            self.descriptionOpacityAnimation.setEndValue(1)
+            self.descriptionOpacityAnimation.setDuration(100)
+            self.descriptionText.setGraphicsEffect(self.descriptionOpacityEffect)
 
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_Hover, True)
         self.destroyed.connect(
@@ -178,12 +193,19 @@ class LevelBox(fancyframe.FancyFrame):
         return super().eventFilter(watched, event)
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
-        if self.descriptionText.toPlainText() != "":
-            self.descriptionText.setVisible(True)
+        if self.descriptionText is not None:
+            self.descriptionOpacityAnimation.setDirection(
+                QtCore.QPropertyAnimation.Direction.Forward
+            )
+            self.descriptionOpacityAnimation.start()
         return super().enterEvent(a0)
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
-        self.descriptionText.setVisible(False)
+        if self.descriptionText is not None:
+            self.descriptionOpacityAnimation.setDirection(
+                QtCore.QPropertyAnimation.Direction.Backward
+            )
+            self.descriptionOpacityAnimation.start()
         return super().leaveEvent(a0)
 
     def change_facet_approval(self, onlyreviewed):
