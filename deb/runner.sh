@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 /usr/share/qrhythmcafe/qrhythmcafe.py "$@"
+exec python3 /usr/share/qrhythmcafe/qrhythmcafe.py "$@"
