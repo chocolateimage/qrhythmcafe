@@ -1,10 +1,12 @@
 #!/usr/bin/python3
-import os, sys
+import os
+import sys
 
 if __name__ == "__main__":  # make imports work when opening from another directory
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
+
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPalette, QColor

@@ -51,7 +51,7 @@ def get_available_rd_level_name(data):
         data.get("sha1", None),
     ]
     for i in names:
-        if i == None:
+        if i is None:
             continue
         if os.path.isdir(get_rd_level_folder(i)):
             return i
@@ -69,7 +69,7 @@ def download_rd_level(data):
 
 def remove_rd_level(data):
     foldername = get_available_rd_level_name(data)
-    if foldername == None:
+    if foldername is None:
         return
     path = get_rd_level_folder(foldername)
     shutil.rmtree(path)

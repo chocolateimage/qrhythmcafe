@@ -15,9 +15,9 @@ class LevelBoxMetadata(QtWidgets.QPushButton):
         self.setIcon(QtGui.QIcon(utils.get_icon_path(icon)))
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        if tooltip != None:
+        if tooltip is not None:
             self.setToolTip(tooltip)
-        if onclick != None:
+        if onclick is not None:
             self.setCursor(QtCore.Qt.PointingHandCursor)
             self.clicked.connect(onclick)
 
@@ -274,7 +274,7 @@ class LevelBox(fancyframe.FancyFrame):
         self.repaint()
 
     def is_installed(self):
-        return utils.get_available_rd_level_name(self.data) != None
+        return utils.get_available_rd_level_name(self.data) is not None
 
     def download_click(self):
         self.loadingmovie = QtGui.QMovie("ui/loading.gif", parent=self)
