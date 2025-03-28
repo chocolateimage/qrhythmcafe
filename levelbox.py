@@ -126,7 +126,8 @@ class LevelBox(fancyframe.FancyFrame):
             self.labelDifficulty, QtCore.Qt.AlignmentFlag.AlignTop
         )
 
-        threading.Thread(target=self.load_extra).start()
+        QtCore.QTimer.singleShot(10, self.start_load_extra)
+
         for i in self.data["authors"]:
             self.add_author(i)
         bpmtext = (
@@ -238,6 +239,9 @@ class LevelBox(fancyframe.FancyFrame):
             author,
             onclick=lambda: self.change_facet_author(author),
         )
+
+    def start_load_extra(self):
+        threading.Thread(target=self.load_extra).start()
 
     def load_extra(self):
         filepath = utils.get_temp_folder() + "/" + self.data["id"] + ".png"
