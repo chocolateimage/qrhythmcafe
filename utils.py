@@ -3,9 +3,9 @@ from pathlib import Path
 try:
     from gi.repository import GLib
 
-    hasgi = True
+    has_glib = True
 except Exception:
-    hasgi = False
+    has_glib = False
 import urllib.request
 import zipfile
 import os
@@ -17,17 +17,21 @@ VERSION_NUMBER = "0.2.0"
 
 
 def get_temp_folder():
-    if hasgi:
+    if has_glib:
         path = GLib.get_user_cache_dir() + "/qrhythmcafe_temp"
-    else:
+    elif os.name == "win32":
         path = str(Path.home()) + "/AppData/Local/Temp/qrhythmcafe_temp"
+    else:
+        path = str(Path.home()) + "/.cache/qrhythmcafe_temp"
+
     if not os.path.exists(path):
         os.makedirs(path)
+
     return path
 
 
 def get_rd_levels_folder():
-    if hasgi:
+    if has_glib:
         return (
             GLib.get_user_special_dir(GLib.USER_DIRECTORY_DOCUMENTS)
             + "/Rhythm Doctor/Levels"
