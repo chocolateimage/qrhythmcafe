@@ -126,7 +126,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.onsearchchanged(0)
 
     def onsearchchanged(self, delay=700):
-        if self.searchTimer != None:
+        if self.searchTimer is not None:
             self.searchTimer.stop()
         self.shareddata["facet"] = {}
         self.searchTimer = QtCore.QTimer()
