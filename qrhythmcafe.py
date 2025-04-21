@@ -109,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "max_facet_values": "10",
             "filter_by": " && ".join(filterby),
             "page": self.shareddata["page"],
-            "sort_by": "_text_match:desc,last_updated:desc",
+            "sort_by": "_text_match:desc,indexed:desc,last_updated:desc",
             "num_typos": "2, 1, 1, 1, 0",
         }
         if facet_query is not None:
