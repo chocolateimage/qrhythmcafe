@@ -14,7 +14,9 @@ class LevelBoxMetadata(QtWidgets.QPushButton):
 
         self.setIcon(QtGui.QIcon(utils.get_icon_path(icon)))
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         if tooltip is not None:
             self.setToolTip(tooltip)
         if onclick is not None:
@@ -97,7 +99,8 @@ class LevelBox(fancyframe.FancyFrame):
             lambda: self.isDestroyed.append(True)
         )  # extremely hacky way
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Expanding,
         )
         self.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.layoutMetadata = flowlayout.FlowLayout(self.widgetMetadata, 0, 0, 0)

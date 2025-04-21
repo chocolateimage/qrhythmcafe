@@ -69,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def onMainScroll(self, value):
         diff = self.scrollarea.verticalScrollBar().maximum() - value
         if diff < 1000:
-            if self.shareddata["ispageloading"] == False:
+            if not self.shareddata["ispageloading"]:
                 if self.shareddata["page"] != self.shareddata["maxpage"]:
                     self.navChange(1)
 
@@ -112,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "sort_by": "_text_match:desc,last_updated:desc",
             "num_typos": "2, 1, 1, 1, 0",
         }
-        if facet_query != None:
+        if facet_query is not None:
             params["facet_query"] = facet_query
         print(params)
         response = requests.get(
@@ -201,7 +201,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if resetpage:
             for i in self.thething.children():
-                if type(i) == facet.Facet or type(i) == facet.PeerReviewedWidget:
+                if isinstance(i, facet.Facet) or isinstance(
+                    i, facet.PeerReviewedWidget
+                ):
                     i.deleteLater()
             for i in js["facet_counts"]:
                 if i["field_name"] == "source":
@@ -214,7 +216,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.thething.layout().addWidget(facet.PeerReviewedWidget(self))
 
             for i in self.vlay.children():
-                if type(i) == levelbox.LevelBox:
+                if isinstance(i, levelbox.LevelBox):
                     i.deleteLater()
 
         for i in js["hits"]:
