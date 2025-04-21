@@ -7,9 +7,9 @@ if __name__ == "__main__":  # make imports work when opening from another direct
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-from PyQt5 import QtWidgets, uic, QtCore, QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPalette, QColor
+from PyQt6 import QtWidgets, uic, QtCore, QtGui
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPalette, QColor
 import requests
 import flowlayout
 import levelbox
@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scrollarea.verticalScrollBar().valueChanged.connect(self.onMainScroll)
         self.vlay: QtWidgets.QWidget = self.verticalLayoutWidget
         self.thething: QtWidgets.QWidget = self.thething
-        self.thething.layout().setAlignment(Qt.AlignTop)
+        self.thething.layout().setAlignment(Qt.AlignmentFlag.AlignTop)
         self.vlaylayout = flowlayout.FlowLayout(self.vlay, 12, 8, 8)
         self.actionOpen_rhythm_cafe.triggered.connect(
             lambda: webbrowser.open("https://rhythm.cafe/")
@@ -246,4 +246,4 @@ if __name__ == "__main__":
 
     mw = MainWindow()
     mw.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

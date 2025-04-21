@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, uic, QtCore
+from PyQt6 import QtWidgets, uic, QtCore
 import fancyframe
 
 
@@ -9,7 +9,7 @@ class Facet(fancyframe.FancyFrame):
         self.mw = mw
         self.itemsLayout: QtWidgets.QVBoxLayout = self.itemsLayout
         self.txtFilter: QtWidgets.QLineEdit = self.txtFilter
-        self.topLayout.setAlignment(QtCore.Qt.AlignTop)
+        self.topLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.load_data(data)
         self.txtFilter.returnPressed.connect(self.onSearch)
 
@@ -62,7 +62,7 @@ class PeerReviewedWidget(fancyframe.FancyFrame):
         uic.loadUi("ui/facet.ui", self)
         self.mw = mw
         self.itemsLayout: QtWidgets.QVBoxLayout = self.itemsLayout
-        self.topLayout.setAlignment(QtCore.Qt.AlignTop)
+        self.topLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.txtFilter.setVisible(False)
         self.lblName.setText("Peer Review")
         self.lblTotal.setVisible(False)

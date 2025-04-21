@@ -10,13 +10,13 @@ Download the .exe (or .deb if you're on linux) from the releases section: https:
 You will need Python for this during development.
 
 #### Linux
-You need to install PyQT5 and requests with apt:
+You need to install PyQt6 and requests with apt:
 
-`sudo apt install python3-pyqt5 python3-requests`
+`sudo apt install python3-pyqt6 python3-requests`
 #### Windows
-On windows you need to install PyQT5 and requests with pip:
+On windows you need to install PyQt6 and requests with pip:
 
-`pip install PyQT5 requests`
+`pip install PyQt6 requests`
 
 ## Building
 

@@ -1,5 +1,5 @@
 import fancyframe
-from PyQt5 import QtWidgets, uic, QtGui, QtCore
+from PyQt6 import QtWidgets, uic, QtGui, QtCore
 import threading
 import os
 import urllib.request
@@ -14,11 +14,11 @@ class LevelBoxMetadata(QtWidgets.QPushButton):
 
         self.setIcon(QtGui.QIcon(utils.get_icon_path(icon)))
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         if tooltip is not None:
             self.setToolTip(tooltip)
         if onclick is not None:
-            self.setCursor(QtCore.Qt.PointingHandCursor)
+            self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
             self.clicked.connect(onclick)
 
 
@@ -28,7 +28,7 @@ class LevelBoxTag(QtWidgets.QLabel):
         self.setStyleSheet(
             "QLabel{background: rgba(128,128,128,0.2); padding: 2px 4px; border-radius: 8px;} QLabel:hover {background: rgba(128,128,128,0.4)}"
         )
-        self.setCursor(QtCore.Qt.PointingHandCursor)
+        self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         self.setWordWrap(True)
         self.onclick = onclick
 
@@ -97,16 +97,16 @@ class LevelBox(fancyframe.FancyFrame):
             lambda: self.isDestroyed.append(True)
         )  # extremely hacky way
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.layout().setAlignment(QtCore.Qt.AlignTop)
+        self.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.layoutMetadata = flowlayout.FlowLayout(self.widgetMetadata, 0, 0, 0)
-        self.layoutMetadata.setAlignment(QtCore.Qt.AlignTop)
+        self.layoutMetadata.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.layoutMetadata.setContentsMargins(8, 0, 8, 0)
         self.layoutTags = flowlayout.FlowLayout(self.widgetTags, 0, 4, 4)
-        self.layoutTags.setAlignment(QtCore.Qt.AlignTop)
+        self.layoutTags.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.layoutTags.setContentsMargins(8, 0, 8, 0)
-        self.bottompart.layout().setAlignment(QtCore.Qt.AlignTop)
+        self.bottompart.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.labelId.setText(self.data["id"])
         self.labelId.setStyleSheet("color: rgba(128,128,128,0.4)")
         self.labelSong.setText(self.data["song"])
@@ -248,6 +248,9 @@ class LevelBox(fancyframe.FancyFrame):
         if not os.path.exists(filepath):
             urllib.request.urlretrieve(self.data["image"], filepath)
 
+        if len(self.isDestroyed) > 0:
+            return
+
         thumbnailtext: QtWidgets.QLabel = self.thumbnail
         pixmap = QtGui.QPixmap(filepath).scaled(
             thumbnailtext.width(),
@@ -258,8 +261,7 @@ class LevelBox(fancyframe.FancyFrame):
         final_pixmap.fill(QtGui.QColor(255, 255, 255, 0))
         with QtGui.QPainter(final_pixmap) as painter:
             path = QtGui.QPainterPath()
-            painter.setRenderHint(QtGui.QPainter.Antialiasing)
-            painter.setRenderHint(QtGui.QPainter.HighQualityAntialiasing)
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
             path.addRoundedRect(0, 0, final_pixmap.width(), final_pixmap.height(), 8, 8)
             painter.setClipPath(path)
             painter.drawPixmap(0, 0, pixmap)

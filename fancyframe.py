@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtGui
+from PyQt6 import QtWidgets, QtGui
 
 
 class FancyFrame(QtWidgets.QWidget):
@@ -11,7 +11,6 @@ class FancyFrame(QtWidgets.QWidget):
         else:
             painter.setBrush(QtGui.QColor(128, 128, 128, 30))
             painter.setPen(QtGui.QColor(128, 128, 128, 90))
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.setRenderHint(QtGui.QPainter.HighQualityAntialiasing)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.drawRoundedRect(0, 0, self.width(), self.height(), 8, 8)
         super().paintEvent(e)

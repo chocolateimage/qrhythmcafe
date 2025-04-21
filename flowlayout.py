@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 
 
 class FlowLayout(QtWidgets.QLayout):
@@ -39,7 +39,7 @@ class FlowLayout(QtWidgets.QLayout):
             return self._items.pop(index)
 
     def expandingDirections(self):
-        return QtCore.Qt.Orientations(0)
+        return QtCore.Qt.Orientation.Horizontal
 
     def hasHeightForWidth(self):
         return True
@@ -73,16 +73,16 @@ class FlowLayout(QtWidgets.QLayout):
             hspace = self.horizontalSpacing()
             if hspace == -1:
                 hspace = widget.style().layoutSpacing(
-                    QtWidgets.QSizePolicy.PushButton,
-                    QtWidgets.QSizePolicy.PushButton,
-                    QtCore.Qt.Horizontal,
+                    QtWidgets.QSizePolicy.ControlType.PushButton,
+                    QtWidgets.QSizePolicy.ControlType.PushButton,
+                    QtCore.Qt.Orientation.Horizontal,
                 )
             vspace = self.verticalSpacing()
             if vspace == -1:
                 vspace = widget.style().layoutSpacing(
-                    QtWidgets.QSizePolicy.PushButton,
-                    QtWidgets.QSizePolicy.PushButton,
-                    QtCore.Qt.Vertical,
+                    QtWidgets.QSizePolicy.ControlType.PushButton,
+                    QtWidgets.QSizePolicy.ControlType.PushButton,
+                    QtCore.Qt.Orientation.Vertical,
                 )
             nextX = x + item.sizeHint().width() + hspace
             if nextX - hspace > effective.right() and lineheight > 0:

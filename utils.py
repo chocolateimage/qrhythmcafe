@@ -10,8 +10,8 @@ import urllib.request
 import zipfile
 import os
 import shutil
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QPalette
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QPalette
 
 VERSION_NUMBER = "0.2.1"
 
