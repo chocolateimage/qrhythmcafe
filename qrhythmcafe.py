@@ -46,6 +46,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionAbout.triggered.connect(lambda: self.showabout())
         self.actionAbout_QT.triggered.connect(lambda: self.showaboutqt())
 
+        self.resetFiltersButton.hide()
+        self.resetFiltersButton.clicked.connect(self.resetFilters)
+
         self.loadingmovie = QtGui.QMovie("ui/loading.gif", parent=self)
         self.loadingmovie.start()
         self.loadingmovie.setScaledSize(QtCore.QSize(32, 32))
@@ -130,7 +133,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def onsearchchanged(self, delay=700):
         if self.searchTimer is not None:
             self.searchTimer.stop()
-        self.shareddata["facet"] = {}
         self.searchTimer = QtCore.QTimer()
         self.searchTimer.setSingleShot(True)
         self.searchTimer.setInterval(delay)
@@ -201,6 +203,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 str(js["found"]) + " levels found for " + js["request_params"]["q"]
             )
 
+        self.resetFiltersButton.hide()
+        for i in self.shareddata["facet"].values():
+            if len(i) > 0:
+                self.resetFiltersButton.show()
+                break
+
         if resetpage:
             for i in self.thething.children():
                 if isinstance(i, facet.Facet) or isinstance(
@@ -226,6 +234,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.vlaylayout.addWidget(lb)
         if resetpage:
             self.scrollarea.verticalScrollBar().setValue(0)
+
+    def resetFilters(self):
+        self.resetFiltersButton.hide()
+        self.shareddata["facet"] = {}
+        self.reloadLevels()
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if (
