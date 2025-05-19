@@ -227,6 +227,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if resetpage:
             self.scrollarea.verticalScrollBar().setValue(0)
 
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if (
+            event.key() == QtCore.Qt.Key.Key_F
+            and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+        ):
+            event.accept()
+            self.txtSearch.setFocus()
+            return
+
+        return super().keyPressEvent(event)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
