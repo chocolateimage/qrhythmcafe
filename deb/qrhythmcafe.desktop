@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Version=0.2.1
+Version=1.0.0
 Name=QRhythmCafe
 Comment=A desktop version of rhythm.cafe to download levels directly into the Rhythm Doctor levels folder
 Exec=/usr/bin/qrhythmcafe
