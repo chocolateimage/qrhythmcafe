@@ -4,7 +4,7 @@
 
 ## How can I run this?
 
-Download the .exe (or .deb if you're on linux) from the releases section: https://github.com/chocolateimage/qrhythmcafe/releases
+Download the .exe (or .deb if you're on Linux) from the releases section: https://github.com/chocolateimage/qrhythmcafe/releases
 
 ## Developing
 You will need Python for this during development.
@@ -12,7 +12,8 @@ You will need Python for this during development.
 #### Linux
 You need to install PyQt6 and requests with apt:
 
-`sudo apt install python3-pyqt6 python3-requests`
+`sudo apt install python3-pyqt6 python3-requests pyqt6-dev-tools`
+
 #### Windows
 On windows you need to install PyQt6 and requests with pip:
 
