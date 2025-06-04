@@ -13,7 +13,7 @@ import shutil
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QPalette
 
-VERSION_NUMBER = "1.0.0"
+VERSION_NUMBER = "1.0.1"
 
 
 def get_temp_folder():
