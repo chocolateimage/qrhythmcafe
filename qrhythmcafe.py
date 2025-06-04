@@ -119,7 +119,7 @@ class MainWindow(QtWidgets.QMainWindow):
         }
         if facet_query is not None:
             params["facet_query"] = facet_query
-        print(params)
+
         response = requests.get(
             "https://orchardb.fly.dev/typesense/collections/levels/documents/search",
             params=params,
@@ -159,7 +159,6 @@ class MainWindow(QtWidgets.QMainWindow):
             finished = QtCore.pyqtSignal(object)
 
             def run(this):
-                print("searching")
                 this.finished.emit(self.makeSearchRequest())
 
         self.t = ReloadLevelsThread()
