@@ -253,6 +253,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    app.setDesktopFileName("qrhythmcafe")
+
     if os.name == "nt":
         app.setStyle("Fusion")
         palette = QPalette()
