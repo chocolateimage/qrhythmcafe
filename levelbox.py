@@ -5,6 +5,7 @@ import os
 import urllib.request
 import utils
 import flowlayout
+import loading_spinner
 
 
 class LevelBoxMetadata(QtWidgets.QPushButton):
@@ -60,6 +61,7 @@ class LevelBox(fancyframe.FancyFrame):
 
         self.labelArtist: QtWidgets.QLabel
         self.labelDifficulty: QtWidgets.QLabel
+        self.labelId: QtWidgets.QLabel
         self.horizontalLayout: QtWidgets.QHBoxLayout
 
         self.data = data
@@ -158,9 +160,10 @@ class LevelBox(fancyframe.FancyFrame):
             self.layoutTags.addWidget(LevelBoxSeizureWarning())
         for i in self.data["tags"]:
             self.add_tag(i)
-        self.btnDownload: QtWidgets.QPushButton = (
-            self.btnDownload
+        self.btnDownload: (
+            QtWidgets.QPushButton
         )  # just for allowing auto complete in vs code
+        self.btnDownload.setFixedSize(38, 38)
         self.btnDownload.clicked.connect(self.download_click)
         self.update_download_button()
 
@@ -308,14 +311,11 @@ class LevelBox(fancyframe.FancyFrame):
         return utils.get_available_rd_level_name(self.data) is not None
 
     def download_click(self):
-        self.loadingmovie = QtGui.QMovie("ui/loading.gif", parent=self)
-        self.loadingmovie.frameChanged.connect(
-            lambda x: self.btnDownload.setIcon(
-                QtGui.QIcon(self.loadingmovie.currentPixmap())
-            )
-        )
+        self.loading_spinner = loading_spinner.LoadingSpinner(self.btnDownload)
+        self.loading_spinner.setContentsMargins(6, 6, 0, 0)
+        self.loading_spinner.show()
+        self.labelId.setFocus()
         self.btnDownload.setDisabled(True)
-        self.loadingmovie.start()
         if self.is_installed():
             threading.Thread(target=self._remove).start()
         else:
@@ -324,7 +324,7 @@ class LevelBox(fancyframe.FancyFrame):
     def _remove(self):
         utils.remove_rd_level(self.data)
 
-        self.loadingmovie.stop()
+        self.loading_spinner.deleteLater()
         self.update_download_button()
         self.btnDownload.setDisabled(False)
 
@@ -333,6 +333,6 @@ class LevelBox(fancyframe.FancyFrame):
         if len(self.isDestroyed) > 0:
             print("download finished and levelbox is destroyed")
             return
-        self.loadingmovie.stop()
+        self.loading_spinner.deleteLater()
         self.update_download_button()
         self.btnDownload.setDisabled(False)

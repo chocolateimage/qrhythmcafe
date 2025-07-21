@@ -17,6 +17,7 @@ import utils
 import facet
 import webbrowser
 import math
+import loading_spinner
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0",
@@ -49,11 +50,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resetFiltersButton.hide()
         self.resetFiltersButton.clicked.connect(self.resetFilters)
 
-        self.loadingmovie = QtGui.QMovie("ui/loading.gif", parent=self)
-        self.loadingmovie.start()
-        self.loadingmovie.setScaledSize(QtCore.QSize(32, 32))
-        self.loading_spinner = QtWidgets.QLabel(self.vlay)
-        self.loading_spinner.setMovie(self.loadingmovie)
+        self.loading_spinner = loading_spinner.LoadingSpinner(self.vlay)
+        self.loading_spinner.setFixedSize(48, 48)
         self.loading_spinner.hide()
         self.shareddata = {
             "facet": {},
