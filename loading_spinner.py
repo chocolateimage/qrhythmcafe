@@ -45,9 +45,6 @@ class LoadingSpinner(QWidget):
                 )
             )
 
-            painter.setCompositionMode(
-                QPainter.CompositionMode.CompositionMode_SourceOver
-            )
             painter.setPen(QPen(self.window().palette().light(), border_width))
             painter.drawEllipse(rect)
 
