@@ -1,3 +1,4 @@
+import math
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtGui import QPainter, QColor
 from PyQt6.QtCore import QMargins, QTimer
@@ -9,6 +10,8 @@ class LoadingSpinner(QWidget):
         self.resize(32, 32)
 
         self.ticks = 0
+        self.rotation = 0
+        self.length = 0
         self.timer = QTimer(self)
         self.timer.setInterval(16)
         self.timer.timeout.connect(self.ticked)
@@ -16,6 +19,11 @@ class LoadingSpinner(QWidget):
 
     def ticked(self):
         self.ticks += 1
+        self.rotation += (math.sin(self.ticks / 15) + 2) * 4
+        self.length = (math.sin(self.ticks / 15) + 2) * 90
+        if self.rotation > 360:
+            self.rotation -= 360
+
         self.repaint()
 
     def paintEvent(self, event):
@@ -31,14 +39,14 @@ class LoadingSpinner(QWidget):
             painter.setCompositionMode(
                 QPainter.CompositionMode.CompositionMode_SourceOver
             )
-            painter.setBrush(self.palette().light())
+            painter.setBrush(self.window().palette().light())
             painter.drawEllipse(rect)
 
-            painter.setBrush(self.palette().accent())
+            painter.setBrush(self.window().palette().accent())
             painter.drawPie(
                 rect,
-                -(self.ticks * 5) * 16,
-                90 * 16,
+                int(-self.rotation * 16 - self.length * 8),
+                int(self.length * 16),
             )
 
             painter.setBrush(painter.background())
