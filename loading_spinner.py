@@ -1,7 +1,7 @@
 import math
 from PyQt6.QtWidgets import QWidget
-from PyQt6.QtGui import QPainter, QColor
-from PyQt6.QtCore import QMargins, QTimer
+from PyQt6.QtGui import QPainter, QPen
+from PyQt6.QtCore import QTimer
 
 
 class LoadingSpinner(QWidget):
@@ -27,33 +27,35 @@ class LoadingSpinner(QWidget):
         self.repaint()
 
     def paintEvent(self, event):
-        rect = self.rect().marginsRemoved(self.contentsMargins())
         with QPainter(self) as painter:
             painter: QPainter
 
             painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
-            painter.setPen(QColor(0, 0, 0, 0))
 
             border_width = int(min(self.height(), self.width()) / 8)
+
+            rect = (
+                self.rect()
+                .marginsRemoved(self.contentsMargins())
+                .adjusted(
+                    int(border_width / 2),
+                    int(border_width / 2),
+                    int(border_width / -2),
+                    int(border_width / -2),
+                )
+            )
 
             painter.setCompositionMode(
                 QPainter.CompositionMode.CompositionMode_SourceOver
             )
-            painter.setBrush(self.window().palette().light())
+            painter.setPen(QPen(self.window().palette().light(), border_width))
             painter.drawEllipse(rect)
 
-            painter.setBrush(self.window().palette().accent())
-            painter.drawPie(
+            painter.setPen(QPen(self.window().palette().accent(), border_width))
+            painter.drawArc(
                 rect,
                 int(-self.rotation * 16 - self.length * 8),
                 int(self.length * 16),
-            )
-
-            painter.setBrush(painter.background())
-            painter.drawEllipse(
-                rect.marginsRemoved(
-                    QMargins(border_width, border_width, border_width, border_width)
-                )
             )
 
         return super().paintEvent(event)

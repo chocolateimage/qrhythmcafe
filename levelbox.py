@@ -311,6 +311,7 @@ class LevelBox(fancyframe.FancyFrame):
         return utils.get_available_rd_level_name(self.data) is not None
 
     def download_click(self):
+        self.btnDownload.setIcon(QtGui.QIcon())
         self.loading_spinner = loading_spinner.LoadingSpinner(self.btnDownload)
         self.loading_spinner.setContentsMargins(6, 6, 0, 0)
         self.loading_spinner.show()
