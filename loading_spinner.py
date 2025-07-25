@@ -1,7 +1,7 @@
 import math
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtGui import QPainter, QPen
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 
 
 class LoadingSpinner(QWidget):
@@ -19,8 +19,8 @@ class LoadingSpinner(QWidget):
 
     def ticked(self):
         self.ticks += 1
-        self.rotation += (math.sin(self.ticks / 15) + 2) * 4
-        self.length = (math.sin(self.ticks / 15) + 2) * 90
+        self.rotation += (math.sin(self.ticks / 20) + 1.5) * 6
+        self.length = (math.sin(self.ticks / 20) + 1.1) * 90
         if self.rotation > 360:
             self.rotation -= 360
 
@@ -48,7 +48,13 @@ class LoadingSpinner(QWidget):
             painter.setPen(QPen(self.window().palette().light(), border_width))
             painter.drawEllipse(rect)
 
-            painter.setPen(QPen(self.window().palette().accent(), border_width))
+            painter.setPen(
+                QPen(
+                    self.window().palette().accent(),
+                    border_width,
+                    cap=Qt.PenCapStyle.FlatCap,
+                )
+            )
             painter.drawArc(
                 rect,
                 int(-self.rotation * 16 - self.length * 8),
