@@ -144,6 +144,7 @@ class MainWindow(QtWidgets.QMainWindow):
         currentpageloadid = self.shareddata["latestpageloadid"] + 1
         self.shareddata["latestpageloadid"] = currentpageloadid
         if resetpage:
+            self.vlaylayout.removeWidget(self.loading_spinner)
             self.loading_spinner.move(
                 int(self.rightsidething.width() / 2) - 16,
                 int(self.rightsidething.height() / 2) - 16,
