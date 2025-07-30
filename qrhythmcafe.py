@@ -146,8 +146,15 @@ class MainWindow(QtWidgets.QMainWindow):
         if resetpage:
             self.vlaylayout.removeWidget(self.loading_spinner)
             self.loading_spinner.move(
-                int(self.rightsidething.width() / 2) - 16,
-                int(self.rightsidething.height() / 2) - 16,
+                max(0, int(self.rightsidething.width() / 2 - 24)),
+                max(
+                    0,
+                    int(
+                        self.rightsidething.height() / 2
+                        - 24
+                        + self.scrollarea.verticalScrollBar().value()
+                    ),
+                ),
             )
             self.loading_spinner.raise_()
         else:
