@@ -3,6 +3,7 @@ import sys
 import zipfile
 import yaml
 import utils
+import traceback
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox
 
@@ -18,11 +19,18 @@ class InstallWindow(QWidget):
             QMessageBox.critical(None, "File not found", f"File {file} was not found")
             sys.exit(1)
 
-        self.zipfile = zipfile.ZipFile(file)
-        # Load JSON as YAML as it is more lenient
-        levelContents = yaml.safe_load(
-            self.zipfile.read("main.rdlevel").decode().replace("\t", "    ")
-        )
+        try:
+            self.zipfile = zipfile.ZipFile(file)
+            # Load JSON as YAML as it is more lenient
+            levelContents = yaml.safe_load(
+                self.zipfile.read("main.rdlevel").decode().replace("\t", "    ")
+            )
+        except Exception:
+            traceback.print_exc()
+            QMessageBox.critical(
+                None, "Load error", "An error occured while loading the level data"
+            )
+            sys.exit(1)
 
         self.levelpath = utils.get_rd_level_folder(
             os.path.basename(self.zipfile.filename).split(".")[0]
