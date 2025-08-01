@@ -3,6 +3,6 @@
     <mime-type type="application/x-rdzip">
         <comment>Rhythm Doctor Level</comment>
         <glob pattern="*.rdzip"/>
-        <icon name="application-zip"/>
+        <icon name="package-x-generic"/>
     </mime-type>
 </mime-info>
