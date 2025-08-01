@@ -19,7 +19,7 @@ You need to install these Python packages, preferrably with your package manager
 
 ```bash
 # apt (Debian, Ubuntu, Mint, etc.)
-sudo apt install python3-pyqt6 python3-requests pyqt6-dev-tools python3-yaml`
+sudo apt install python3-pyqt6 python3-requests pyqt6-dev-tools python3-yaml
 
 # Pacman (Arch)
 sudo pacman -S --needed python python-pyqt6 python-requests python-yaml
