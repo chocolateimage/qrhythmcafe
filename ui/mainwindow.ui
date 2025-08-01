@@ -175,8 +175,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>320</width>
-               <height>422</height>
+               <width>316</width>
+               <height>418</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3"/>
@@ -289,6 +289,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionInstall_file_handler"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -325,6 +327,11 @@
   <action name="actionAbout_QT">
    <property name="text">
     <string>About QT</string>
+   </property>
+  </action>
+  <action name="actionInstall_file_handler">
+   <property name="text">
+    <string>Install .rdzip file handler</string>
    </property>
   </action>
  </widget>

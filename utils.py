@@ -9,7 +9,13 @@ except Exception:
 import urllib.request
 import zipfile
 import os
+import sys
 import shutil
+
+try:
+    import winreg
+except Exception:
+    pass
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QPalette
 
@@ -94,3 +100,30 @@ def get_icon_path(icon_name):
         return "ui/" + icon_name + "-darkmode.svg"
     else:
         return "ui/" + icon_name + "-lightmode.svg"
+
+
+def has_rdzip_handler():
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Classes\\.rdzip")
+        winreg.CloseKey(key)
+        return True
+    except Exception:
+        return False
+
+
+def install_rdzip_handler():
+    command = '"' + sys.executable + '"'
+
+    if not getattr(sys, "frozen", False):
+        command = (
+            '"'
+            + sys.executable
+            + '" "'
+            + os.path.dirname(__file__)
+            + '\\qrhythmcafe.py"'
+        )
+
+    key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, "Software\\Classes\\.rdzip")
+    winreg.SetValue(key, "", winreg.REG_SZ, "Rhythm Doctor Level")
+    winreg.SetValue(key, "shell\\open\\command\\", winreg.REG_SZ, command)
+    winreg.CloseKey(key)

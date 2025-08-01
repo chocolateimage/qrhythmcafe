@@ -50,6 +50,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resetFiltersButton.hide()
         self.resetFiltersButton.clicked.connect(self.resetFilters)
 
+        if os.name != "win32" or utils.has_rdzip_handler():
+            self.actionInstall_file_handler.deleteLater()
+        else:
+            self.actionInstall_file_handler.triggered.connect(self.installFileHandler)
+
         self.loading_spinner = loading_spinner.LoadingSpinner(self.vlay)
         self.loading_spinner.setFixedSize(48, 48)
         self.loading_spinner.hide()
@@ -66,6 +71,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.txtSearch.textChanged.connect(lambda x: self.onsearchchanged())
         self.txtSearch.returnPressed.connect(self.onsearchpress)
         self.searchTimer = None
+
+    def installFileHandler(self):
+        utils.install_rdzip_handler()
+        self.actionInstall_file_handler.deleteLater()
+        QtWidgets.QMessageBox.information(
+            self,
+            "File handler installed",
+            "You can now install .rdzip files directly with QRhythmCafe",
+        )
 
     def onMainScroll(self, value):
         diff = self.scrollarea.verticalScrollBar().maximum() - value
