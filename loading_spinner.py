@@ -33,6 +33,7 @@ class LoadingSpinner(QWidget):
             painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
 
             border_width = int(min(self.height(), self.width()) / 8)
+            palette = self.window().palette()
 
             rect = (
                 self.rect()
@@ -45,12 +46,14 @@ class LoadingSpinner(QWidget):
                 )
             )
 
-            painter.setPen(QPen(self.window().palette().light(), border_width))
+            painter.setPen(QPen(palette.light(), border_width))
             painter.drawEllipse(rect)
 
             painter.setPen(
                 QPen(
-                    self.window().palette().accent(),
+                    palette.accent()
+                    if hasattr(palette, "accent")
+                    else palette.highlight(),
                     border_width,
                     cap=Qt.PenCapStyle.FlatCap,
                 )
