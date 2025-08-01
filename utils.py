@@ -25,7 +25,7 @@ VERSION_NUMBER = "1.0.1"
 def get_temp_folder():
     if has_glib:
         path = GLib.get_user_cache_dir() + "/qrhythmcafe_temp"
-    elif os.name == "win32":
+    elif os.name == "nt":
         path = str(Path.home()) + "/AppData/Local/Temp/qrhythmcafe_temp"
     else:
         path = str(Path.home()) + "/.cache/qrhythmcafe_temp"

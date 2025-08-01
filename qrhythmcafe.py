@@ -50,7 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resetFiltersButton.hide()
         self.resetFiltersButton.clicked.connect(self.resetFilters)
 
-        if os.name != "win32" or utils.has_rdzip_handler():
+        if os.name != "nt" or utils.has_rdzip_handler():
             self.actionInstall_file_handler.deleteLater()
         else:
             self.actionInstall_file_handler.triggered.connect(self.installFileHandler)
