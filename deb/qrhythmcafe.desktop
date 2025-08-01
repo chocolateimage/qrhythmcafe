@@ -7,3 +7,4 @@ Exec=/usr/bin/qrhythmcafe
 Icon=/usr/share/qrhythmcafe/ui/icon.png
 Terminal=false
 Categories=Utility
+MimeType=application/x-rdzip;

@@ -281,6 +281,13 @@ if __name__ == "__main__":
         palette.setColor(QPalette.ColorRole.Accent, QColor(42, 130, 218))
         app.setPalette(palette)
 
-    mw = MainWindow()
-    mw.show()
+    if len(sys.argv) == 1:
+        mw = MainWindow()
+        mw.show()
+    else:
+        import installer
+
+        window = installer.InstallWindow(sys.argv[1])
+        window.show()
+
     sys.exit(app.exec())

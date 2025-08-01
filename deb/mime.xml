@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="application/x-rdzip">
+        <comment>Rhythm Doctor Level</comment>
+        <glob pattern="*.rdzip"/>
+        <icon name="application-zip"/>
+    </mime-type>
+</mime-info>
