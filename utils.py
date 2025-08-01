@@ -115,13 +115,9 @@ def install_rdzip_handler():
     command = '"' + sys.executable + '"'
 
     if not getattr(sys, "frozen", False):
-        command = (
-            '"'
-            + sys.executable
-            + '" "'
-            + os.path.dirname(__file__)
-            + '\\qrhythmcafe.py"'
-        )
+        command += ' "' + os.path.dirname(__file__) + '\\qrhythmcafe.py"'
+
+    command += ' "%1"'
 
     key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, "Software\\Classes\\.rdzip")
     winreg.SetValue(key, "", winreg.REG_SZ, "Rhythm Doctor Level")
