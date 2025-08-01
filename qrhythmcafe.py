@@ -272,6 +272,7 @@ if __name__ == "__main__":
         palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.black)
         palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.white)
         palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white)
+        palette.setColor(QPalette.ColorRole.PlaceholderText, QColor(128, 128, 128))
         palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
         palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white)
         palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
