@@ -55,6 +55,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.actionInstall_file_handler.triggered.connect(self.installFileHandler)
 
+        self.threads = []
+
         self.loading_spinner = loading_spinner.LoadingSpinner(self.vlay)
         self.loading_spinner.setFixedSize(48, 48)
         self.loading_spinner.hide()
@@ -181,11 +183,12 @@ class MainWindow(QtWidgets.QMainWindow):
             def run(this):
                 this.finished.emit(self.makeSearchRequest())
 
-        self.t = ReloadLevelsThread()
-        self.t.finished.connect(
+        t = ReloadLevelsThread()
+        t.finished.connect(
             lambda a: self._reloadLevels(a, resetpage, currentpageloadid)
         )
-        self.t.start()
+        t.start()
+        self.threads.append(t)
 
     def _reloadLevels(self, js, resetpage, currentpageloadid):
         if self.shareddata["latestpageloadid"] != currentpageloadid:
