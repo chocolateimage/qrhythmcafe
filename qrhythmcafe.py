@@ -18,15 +18,19 @@ import facet
 import webbrowser
 import math
 import loading_spinner
+import urllib.request
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0",
     "Accept": "*/*",
     "Accept-Language": "en-GB,en;q=0.5",
     "Referer": "https://rhythm.cafe/",
-    "x-typesense-api-key": "nicolebestgirl",
     "Origin": "https://rhythm.cafe",
 }
+
+opener = urllib.request.build_opener()
+opener.addheaders = headers.items()
+urllib.request.install_opener(opener)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -113,33 +117,32 @@ class MainWindow(QtWidgets.QMainWindow):
                     filterby.append(facetname + ":=[" + j + "]")
                 else:
                     filterby.append(facetname + ":=`" + j + "`")
-        if self.shareddata["onlyreviewed"]:
-            filterby.append("approval:=[10..20]")
-        else:
-            filterby.append("approval:=[-1..20]")
         params = {
+            "_bridge": "1",
+            "page": str(self.shareddata["page"]),
             "q": self.txtSearch.text().strip(),
-            "query_by": "song, authors, artist, tags, description",
-            "query_by_weights": "12, 8, 6, 5, 4",
-            "facet_by": "authors,tags,source,difficulty,artist",
-            "per_page": "25",
-            "max_facet_values": "10",
-            "filter_by": " && ".join(filterby),
-            "page": self.shareddata["page"],
-            "sort_by": "_text_match:desc,indexed:desc,last_updated:desc"
-            if self.shareddata["onlyreviewed"]
-            else "_text_match:desc,last_updated:desc",
-            "num_typos": "2, 1, 1, 1, 0",
         }
+        if self.shareddata["onlyreviewed"]:
+            params["peer_review"] = "approved"
+        else:
+            params["peer_review"] = "all"
+
+        for i, v in self.shareddata["facet"].items():
+            if i == "difficulty":
+                params[i] = v
+            else:
+                params[i + "_all"] = v
+
         if facet_query is not None:
             params["facet_query"] = facet_query
 
         response = requests.get(
-            "https://orchardb.fly.dev/typesense/collections/levels/documents/search",
+            "https://rhythm.cafe/levels/",
             params=params,
             headers=headers,
         )
-        return response.json()
+
+        return response.json().get("props", {}).get("results", {})
 
     def onsearchpress(self):
         self.onsearchchanged(0)
@@ -213,12 +216,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if len(js["hits"]) == 0:
             maxpage = 1
         else:
-            maxpage = math.ceil(js["found"] / len(js["hits"]))
+            maxpage = math.ceil(js["estimatedTotalHits"] / len(js["hits"]))
 
         if resetpage:
             self.shareddata["maxpage"] = maxpage
 
-        if js["request_params"]["q"] == "":
+        if js.get("q", "") == "":
             self.navFound.setText("")
         else:
             self.navFound.setText(
@@ -237,13 +240,23 @@ class MainWindow(QtWidgets.QMainWindow):
                     i, facet.PeerReviewedWidget
                 ):
                     i.deleteLater()
-            for i in js["facet_counts"]:
-                if i["field_name"] == "source":
+            for i, v in js["facetDistribution"].items():
+                if i.endswith(".id") or i in ["single_player", "two_player"]:
                     continue
-                if i["field_name"] not in self.shareddata["facet"]:
-                    self.shareddata["facet"][i["field_name"]] = []
-
-                f = facet.Facet(i, self)
+                final_id = i.replace("_tokens", "")
+                if final_id == "artist":
+                    final_id = "artists"
+                if final_id not in self.shareddata["facet"]:
+                    self.shareddata["facet"][final_id] = []
+                f = facet.Facet(
+                    {
+                        "field_name": final_id,
+                        "raw": i,
+                        "counts": v,
+                        "count": len(v),
+                    },
+                    self,
+                )
                 self.thething.layout().addWidget(f)
             self.thething.layout().addWidget(facet.PeerReviewedWidget(self))
 
@@ -252,7 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     i.deleteLater()
 
         for i in js["hits"]:
-            lb = levelbox.LevelBox(i["document"], self)
+            lb = levelbox.LevelBox(i, self)
             self.vlaylayout.addWidget(lb)
         if resetpage:
             self.scrollarea.verticalScrollBar().setValue(0)

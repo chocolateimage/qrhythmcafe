@@ -252,7 +252,7 @@ class LevelBox(fancyframe.FancyFrame):
     def load_extra(self):
         filepath = utils.get_temp_folder() + "/" + self.data["id"] + ".png"
         if not os.path.exists(filepath):
-            urllib.request.urlretrieve(self.data["image"], filepath)
+            urllib.request.urlretrieve(self.data["image_url"], filepath)
 
         if len(self.isDestroyed) > 0:
             return

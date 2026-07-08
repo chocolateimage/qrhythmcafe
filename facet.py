@@ -1,5 +1,7 @@
 from PyQt6 import QtWidgets, uic, QtCore
 import fancyframe
+import requests
+from qrhythmcafe import headers
 
 
 class Facet(fancyframe.FancyFrame):
@@ -18,23 +20,36 @@ class Facet(fancyframe.FancyFrame):
         self.fieldname = self.data["field_name"]
         if self.fieldname == "difficulty":
             self.txtFilter.setVisible(False)
-        self.lblName.setText(self.fieldname.capitalize())
-        self.lblTotal.setText("(" + str(self.data["stats"]["total_values"]) + ")")
-        thelist = self.data["counts"]
+        self.lblName.setText(self.fieldname.replace("_", " ").title())
+        self.lblTotal.setText("(" + str(self.data["count"]) + ")")
+        self.load_facets(self.data["counts"])
+
+    def load_facets(self, facets):
         if self.fieldname == "difficulty":
-            thelist = sorted(self.data["counts"], key=lambda a: a["value"])
+            facets = sorted(facets, key=lambda a: a["value"])
         for i in range(self.itemsLayout.count()):
             self.itemsLayout.itemAt(i).widget().deleteLater()
-        for i in thelist:
+        for i in facets:
             self.add_cb(i)
 
     def onSearch(self):
-        js = self.mw.makeSearchRequest(
-            facet_query=self.fieldname + ":" + self.txtFilter.text()
+        response = requests.get(
+            "https://rhythm.cafe/levels/",
+            params={
+                "_bridge": 1,
+                "facet_query_field": self.data["raw"],
+                "facet_query": self.txtFilter.text().strip(),
+            },
+            headers=headers,
         )
-        for i in js["facet_counts"]:
-            if i["field_name"] == self.fieldname:
-                self.load_data(i)
+
+        js = response.json()
+        if "facets" in js["props"]:
+            self.load_facets(js["props"]["facets"])
+        elif "facetDistribution" in js["props"]["results"]:
+            self.load_facets(
+                js["props"]["results"]["facetDistribution"][self.data["raw"]]
+            )
 
     def add_cb(self, i):
         nam = i["value"]

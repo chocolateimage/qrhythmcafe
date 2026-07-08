@@ -71,7 +71,7 @@ def get_available_rd_level_name(data):
 def download_rd_level(data):
     rdzippath = get_temp_folder() + "/" + data["id"] + ".rdzip"
     levelpath = get_rd_level_folder(data["id"])
-    urllib.request.urlretrieve(data["url2"], rdzippath)
+    urllib.request.urlretrieve(data["rdzip_url"], rdzippath)
     with zipfile.ZipFile(rdzippath, "r") as z:
         z.extractall(levelpath)
     os.remove(rdzippath)
